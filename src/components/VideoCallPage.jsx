@@ -24,11 +24,11 @@ const VideoCallPage = () => {
   const remoteVideoRef = useRef(null);
   const pcRef = useRef(null);
   const localStreamRef = useRef(null);
+  const remoteStreamRef = useRef(new MediaStream());
   const pendingCandidates = useRef([]);
 
   const [status, setStatus] = useState("Connecting...");
 
-  // Keep unsubscribe functions
   const answerUnsubRef = useRef(null);
   const candidatesUnsubRef = useRef(null);
 
@@ -48,10 +48,13 @@ const VideoCallPage = () => {
   const start = async () => {
     pcRef.current = new RTCPeerConnection(configuration);
 
+    // Get local media stream
     const localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
     });
+
+    console.log("📹 Local tracks:", localStream.getTracks());
 
     localStreamRef.current = localStream;
     localStream.getTracks().forEach((track) => {
@@ -60,6 +63,7 @@ const VideoCallPage = () => {
 
     localVideoRef.current.srcObject = localStream;
 
+    // Handle ICE candidates
     pcRef.current.onicecandidate = (event) => {
       if (event.candidate) {
         const candidateRef = ref(db, `calls/${requestId}/candidates`);
@@ -68,25 +72,29 @@ const VideoCallPage = () => {
       }
     };
 
+    // Handle incoming tracks
     pcRef.current.ontrack = (event) => {
-      const [remoteStream] = event.streams;
-      remoteVideoRef.current.srcObject = remoteStream;
+      console.log("🎥 Remote track received:", event.track.kind);
+      remoteStreamRef.current.addTrack(event.track);
+      remoteVideoRef.current.srcObject = remoteStreamRef.current;
     };
 
-    // 🔁 Determine if we are the offerer
+    // Determine offerer
     const offerRef = ref(db, `calls/${requestId}/offer`);
     const offerSnapshot = await get(offerRef);
     const isOfferer = !offerSnapshot.exists();
 
     if (isOfferer) {
-      console.log("I am the offerer.");
+      console.log("🟢 I am the offerer.");
       const offer = await pcRef.current.createOffer();
       await pcRef.current.setLocalDescription(offer);
       await set(offerRef, offer);
     } else {
-      console.log("I am the answerer.");
+      console.log("🔵 I am the answerer.");
       const offer = offerSnapshot.val();
-      await pcRef.current.setRemoteDescription(new RTCSessionDescription(offer));
+      await pcRef.current.setRemoteDescription(
+        new RTCSessionDescription(offer)
+      );
       const answer = await pcRef.current.createAnswer();
       await pcRef.current.setLocalDescription(answer);
       await set(ref(db, `calls/${requestId}/answer`), answer);
@@ -96,13 +104,13 @@ const VideoCallPage = () => {
         try {
           await pcRef.current.addIceCandidate(new RTCIceCandidate(c));
         } catch (err) {
-          console.warn("Error adding ICE candidate:", err);
+          console.warn("Error adding pending ICE candidate:", err);
         }
       }
       pendingCandidates.current = [];
     }
 
-    // 👂 Listen for Answer (only if offerer)
+    // Listen for answer (if offerer)
     if (isOfferer) {
       const answerRef = ref(db, `calls/${requestId}/answer`);
       answerUnsubRef.current = onValue(answerRef, async (snapshot) => {
@@ -111,7 +119,9 @@ const VideoCallPage = () => {
         const answer = snapshot.val();
         if (answer && !pcRef.current.currentRemoteDescription) {
           try {
-            await pcRef.current.setRemoteDescription(new RTCSessionDescription(answer));
+            await pcRef.current.setRemoteDescription(
+              new RTCSessionDescription(answer)
+            );
             setStatus("Call Connected");
 
             for (const c of pendingCandidates.current) {
@@ -125,7 +135,7 @@ const VideoCallPage = () => {
       });
     }
 
-    // 👂 Listen for ICE candidates (both sides)
+    // Listen for ICE candidates
     const candidateRef = ref(db, `calls/${requestId}/candidates`);
     candidatesUnsubRef.current = onValue(candidateRef, (snapshot) => {
       if (!pcRef.current || pcRef.current.signalingState === "closed") return;
@@ -149,11 +159,13 @@ const VideoCallPage = () => {
       }
     });
 
-    // Clean up call when connection lost
+    // Auto remove on disconnect
     onDisconnect(ref(db, `calls/${requestId}`)).remove();
   };
 
   const cleanup = async () => {
+    console.log("🧹 Cleaning up call...");
+
     if (answerUnsubRef.current) {
       const answerRef = ref(db, `calls/${requestId}/answer`);
       off(answerRef);
