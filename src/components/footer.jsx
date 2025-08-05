@@ -14,7 +14,7 @@ export default function Footer() {
           <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors duration-300">About</a>
           <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Contact</a>
           <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Privacy Policy</a>
-          <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Terms of Service</a>
+          <a href="/mentorrequestspage" className="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Terms of Service</a>
         </div>
 
         {/* Copyright */}
