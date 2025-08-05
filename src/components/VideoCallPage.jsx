@@ -48,22 +48,20 @@ const VideoCallPage = () => {
   const start = async () => {
     pcRef.current = new RTCPeerConnection(configuration);
 
-    // Get local media stream
+    // 🎥 Local media
     const localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
     });
-
-    console.log("📹 Local tracks:", localStream.getTracks());
-
     localStreamRef.current = localStream;
+
     localStream.getTracks().forEach((track) => {
       pcRef.current.addTrack(track, localStream);
     });
 
     localVideoRef.current.srcObject = localStream;
 
-    // Handle ICE candidates
+    // 📡 ICE candidate send
     pcRef.current.onicecandidate = (event) => {
       if (event.candidate) {
         const candidateRef = ref(db, `calls/${requestId}/candidates`);
@@ -72,14 +70,19 @@ const VideoCallPage = () => {
       }
     };
 
-    // Handle incoming tracks
+    // 🎯 Handle incoming remote track
     pcRef.current.ontrack = (event) => {
       console.log("🎥 Remote track received:", event.track.kind);
       remoteStreamRef.current.addTrack(event.track);
       remoteVideoRef.current.srcObject = remoteStreamRef.current;
+
+      // ⛔️ Fix autoplay issues
+      remoteVideoRef.current
+        .play()
+        .catch((err) => console.warn("Remote video play failed:", err));
     };
 
-    // Determine offerer
+    // 🧠 Offerer logic
     const offerRef = ref(db, `calls/${requestId}/offer`);
     const offerSnapshot = await get(offerRef);
     const isOfferer = !offerSnapshot.exists();
@@ -101,23 +104,21 @@ const VideoCallPage = () => {
       setStatus("Call Connected");
 
       for (const c of pendingCandidates.current) {
-        try {
-          await pcRef.current.addIceCandidate(new RTCIceCandidate(c));
-        } catch (err) {
-          console.warn("Error adding pending ICE candidate:", err);
-        }
+        await pcRef.current.addIceCandidate(new RTCIceCandidate(c));
       }
       pendingCandidates.current = [];
     }
 
-    // Listen for answer (if offerer)
+    // 🎧 Listen for answer (only for offerer)
     if (isOfferer) {
       const answerRef = ref(db, `calls/${requestId}/answer`);
       answerUnsubRef.current = onValue(answerRef, async (snapshot) => {
-        if (!pcRef.current || pcRef.current.signalingState === "closed") return;
-
         const answer = snapshot.val();
-        if (answer && !pcRef.current.currentRemoteDescription) {
+        if (
+          answer &&
+          pcRef.current &&
+          !pcRef.current.currentRemoteDescription
+        ) {
           try {
             await pcRef.current.setRemoteDescription(
               new RTCSessionDescription(answer)
@@ -129,28 +130,27 @@ const VideoCallPage = () => {
             }
             pendingCandidates.current = [];
           } catch (err) {
-            console.warn("Failed to set remote description:", err);
+            console.warn("❌ Failed to set remote description:", err);
           }
         }
       });
     }
 
-    // Listen for ICE candidates
+    // ❄️ Listen for ICE candidates from remote
     const candidateRef = ref(db, `calls/${requestId}/candidates`);
     candidatesUnsubRef.current = onValue(candidateRef, (snapshot) => {
-      if (!pcRef.current || pcRef.current.signalingState === "closed") return;
-
       const data = snapshot.val();
       if (data) {
         Object.values(data).forEach((c) => {
+          const candidate = new RTCIceCandidate(c);
           if (
             pcRef.current?.remoteDescription &&
             pcRef.current.remoteDescription.type
           ) {
             pcRef.current
-              .addIceCandidate(new RTCIceCandidate(c))
+              .addIceCandidate(candidate)
               .catch((err) =>
-                console.warn("Error adding ICE candidate:", err)
+                console.warn("❌ Error adding ICE candidate:", err)
               );
           } else {
             pendingCandidates.current.push(c);
@@ -159,12 +159,11 @@ const VideoCallPage = () => {
       }
     });
 
-    // Auto remove on disconnect
     onDisconnect(ref(db, `calls/${requestId}`)).remove();
   };
 
   const cleanup = async () => {
-    console.log("🧹 Cleaning up call...");
+    console.log("🧹 Cleaning up...");
 
     if (answerUnsubRef.current) {
       const answerRef = ref(db, `calls/${requestId}/answer`);
@@ -198,7 +197,8 @@ const VideoCallPage = () => {
         <div
           className="mt-2 inline-flex items-center px-4 py-1 rounded-full text-sm font-medium text-white"
           style={{
-            backgroundColor: status === "Call Connected" ? "#15803d33" : "#facc1533",
+            backgroundColor:
+              status === "Call Connected" ? "#15803d33" : "#facc1533",
             border: `1px solid ${
               status === "Call Connected" ? "#15803d66" : "#facc1566"
             }`,
@@ -207,17 +207,18 @@ const VideoCallPage = () => {
           <div
             className="w-2 h-2 rounded-full mr-2"
             style={{
-              backgroundColor: status === "Call Connected" ? "#22c55e" : "#fbbf24",
-              animation: status === "Call Connected" ? "none" : "pulse 2s infinite",
+              backgroundColor:
+                status === "Call Connected" ? "#22c55e" : "#fbbf24",
+              animation:
+                status === "Call Connected" ? "none" : "pulse 2s infinite",
             }}
           ></div>
           {status}
         </div>
       </div>
 
-      {/* Main Video Area */}
+      {/* Video Area */}
       <div className="flex-1 flex items-center justify-center gap-8 p-8 relative">
-        {/* Remote Video */}
         <div className="relative rounded-2xl overflow-hidden shadow-2xl border-2 border-white/10 bg-black/20">
           <video
             ref={remoteVideoRef}
@@ -230,7 +231,6 @@ const VideoCallPage = () => {
           </div>
         </div>
 
-        {/* Local Video (PiP) */}
         <div className="absolute top-6 right-6 w-[200px] h-[150px] rounded-xl overflow-hidden shadow-xl border-2 border-white/20 bg-black/20">
           <video
             ref={localVideoRef}
@@ -245,7 +245,7 @@ const VideoCallPage = () => {
         </div>
       </div>
 
-      {/* Bottom Controls */}
+      {/* Controls */}
       <div className="bg-black bg-opacity-30 backdrop-blur p-6 text-center border-t border-white/20">
         <button
           onClick={handleLeave}
