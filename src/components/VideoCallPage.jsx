@@ -9,11 +9,11 @@ import {
   push,
   remove,
   set,
-  off
+  off,
 } from "firebase/database";
 
 const configuration = {
-  iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
 };
 
 const VideoCallPage = () => {
@@ -42,7 +42,7 @@ const VideoCallPage = () => {
     start();
 
     return () => cleanup();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 
   const start = async () => {
@@ -50,7 +50,7 @@ const VideoCallPage = () => {
 
     const localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: true
+      audio: true,
     });
 
     localStreamRef.current = localStream;
@@ -73,18 +73,20 @@ const VideoCallPage = () => {
       remoteVideoRef.current.srcObject = remoteStream;
     };
 
-    const offerSnapshot = await get(ref(db, `calls/${requestId}/offer`));
+    // 🔁 Determine if we are the offerer
+    const offerRef = ref(db, `calls/${requestId}/offer`);
+    const offerSnapshot = await get(offerRef);
+    const isOfferer = !offerSnapshot.exists();
 
-    if (!offerSnapshot.exists()) {
+    if (isOfferer) {
+      console.log("I am the offerer.");
       const offer = await pcRef.current.createOffer();
       await pcRef.current.setLocalDescription(offer);
-      await set(ref(db, `calls/${requestId}/offer`), offer);
+      await set(offerRef, offer);
     } else {
+      console.log("I am the answerer.");
       const offer = offerSnapshot.val();
-      await pcRef.current.setRemoteDescription(
-        new RTCSessionDescription(offer)
-      );
-
+      await pcRef.current.setRemoteDescription(new RTCSessionDescription(offer));
       const answer = await pcRef.current.createAnswer();
       await pcRef.current.setLocalDescription(answer);
       await set(ref(db, `calls/${requestId}/answer`), answer);
@@ -94,47 +96,39 @@ const VideoCallPage = () => {
         try {
           await pcRef.current.addIceCandidate(new RTCIceCandidate(c));
         } catch (err) {
-          console.warn("Error adding pending ICE candidate:", err);
+          console.warn("Error adding ICE candidate:", err);
         }
       }
       pendingCandidates.current = [];
     }
 
-    // 👇 Answer listener
-    const answerRef = ref(db, `calls/${requestId}/answer`);
-    answerUnsubRef.current = onValue(answerRef, async (snapshot) => {
-      if (
-        !pcRef.current ||
-        pcRef.current.signalingState === "closed"
-      )
-        return;
+    // 👂 Listen for Answer (only if offerer)
+    if (isOfferer) {
+      const answerRef = ref(db, `calls/${requestId}/answer`);
+      answerUnsubRef.current = onValue(answerRef, async (snapshot) => {
+        if (!pcRef.current || pcRef.current.signalingState === "closed") return;
 
-      const answer = snapshot.val();
-      if (answer && !pcRef.current.currentRemoteDescription) {
-        try {
-          await pcRef.current.setRemoteDescription(
-            new RTCSessionDescription(answer)
-          );
-          setStatus("Call Connected");
+        const answer = snapshot.val();
+        if (answer && !pcRef.current.currentRemoteDescription) {
+          try {
+            await pcRef.current.setRemoteDescription(new RTCSessionDescription(answer));
+            setStatus("Call Connected");
 
-          for (const c of pendingCandidates.current) {
-            await pcRef.current.addIceCandidate(new RTCIceCandidate(c));
+            for (const c of pendingCandidates.current) {
+              await pcRef.current.addIceCandidate(new RTCIceCandidate(c));
+            }
+            pendingCandidates.current = [];
+          } catch (err) {
+            console.warn("Failed to set remote description:", err);
           }
-          pendingCandidates.current = [];
-        } catch (err) {
-          console.warn("Failed to set remote description:", err);
         }
-      }
-    });
+      });
+    }
 
-    // 👇 ICE candidates listener
+    // 👂 Listen for ICE candidates (both sides)
     const candidateRef = ref(db, `calls/${requestId}/candidates`);
     candidatesUnsubRef.current = onValue(candidateRef, (snapshot) => {
-      if (
-        !pcRef.current ||
-        pcRef.current.signalingState === "closed"
-      )
-        return;
+      if (!pcRef.current || pcRef.current.signalingState === "closed") return;
 
       const data = snapshot.val();
       if (data) {
@@ -155,6 +149,7 @@ const VideoCallPage = () => {
       }
     });
 
+    // Clean up call when connection lost
     onDisconnect(ref(db, `calls/${requestId}`)).remove();
   };
 
@@ -188,7 +183,8 @@ const VideoCallPage = () => {
       {/* Top Bar */}
       <div className="bg-black bg-opacity-30 backdrop-blur p-4 text-center border-b border-white/20">
         <h2 className="text-white text-xl font-semibold">📞 Video Call</h2>
-        <div className="mt-2 inline-flex items-center px-4 py-1 rounded-full text-sm font-medium text-white"
+        <div
+          className="mt-2 inline-flex items-center px-4 py-1 rounded-full text-sm font-medium text-white"
           style={{
             backgroundColor: status === "Call Connected" ? "#15803d33" : "#facc1533",
             border: `1px solid ${
