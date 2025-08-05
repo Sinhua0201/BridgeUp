@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ✅ 可以留一些全局设定 */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
