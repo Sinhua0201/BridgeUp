@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase";
+import { auth, db } from "../../firebase";
 import { ref, onValue, push, set, get } from "firebase/database";
 
 export default function ChatPage() {

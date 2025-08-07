@@ -91,13 +91,15 @@ export default function LoginModal({ onClose }) {
             {/* ✅ Full Name */}
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  {role === 'company' ? 'Company Name' : 'Full Name'}
+                </label>
                 <input 
                   type="text" 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="w-full border rounded-md px-3 py-2" 
-                  placeholder="John Doe"
+                  placeholder={role === 'company' ? 'Your Company LLC' : 'John Doe'}
                   required 
                 />
               </div>
@@ -159,7 +161,7 @@ export default function LoginModal({ onClose }) {
                     />
                     <span>Student</span>
                   </label>
-                  <label className="flex items-center space-x-2">
+                                    <label className="flex items-center space-x-2">
                     <input 
                       type="radio" 
                       name="role" 
@@ -168,6 +170,16 @@ export default function LoginModal({ onClose }) {
                       onChange={(e) => setRole(e.target.value)}
                     />
                     <span>Mentor</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input 
+                      type="radio" 
+                      name="role" 
+                      value="company" 
+                      checked={role === "company"} 
+                      onChange={(e) => setRole(e.target.value)}
+                    />
+                    <span>Company</span>
                   </label>
                 </div>
               </div>

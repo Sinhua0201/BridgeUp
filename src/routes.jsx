@@ -12,11 +12,11 @@ import CareerNavigator from "./pages/CareerNavigator";
 import ResumeAnalyzer from "./components/ResumeAnalyzer";
 import MockInterview from "./components/MockInterview";
 import Profile from "./components/Profile";
-import MentorSearchPage from "./components/MentorSearchPage";
-import StudentRequestsPage from "./components/StudentRequestsPage";
-import MentorRequestsPage from "./components/MentorRequestsPage";
-import ChatPage from "./components/ChatPage";
-import VideoCallPage from "./components/VideoCallPage";
+import MentorSearchPage from "./components/mentorconnect/MentorSearchPage";
+import StudentRequestsPage from "./components/mentorconnect/StudentRequestsPage";
+import MentorRequestsPage from "./components/mentorconnect/MentorRequestsPage";
+import ChatPage from "./components/mentorconnect/ChatPage";
+import VideoCallPage from "./components/mentorconnect/VideoCallPage";
 
 export default function AppRoutes() {
   return (
