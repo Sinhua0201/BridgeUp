@@ -1,42 +1,153 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../../firebase';
-import { ref, query, orderByChild, equalTo, onValue, update } from 'firebase/database';
+import { db, auth } from '../../firebase';
+import { ref, query, orderByChild, equalTo, onValue, update, push, set } from 'firebase/database';
+import AddTaskForm from './AddTaskForm';
 
-const TaskItem = ({ task }) => {
+const TaskItem = ({ task, onStatusChange, companyView = false, onAssignStudent }) => {
+  const [students, setStudents] = useState([]);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+
+  useEffect(() => {
+    if (task.students) {
+      const studentIds = Object.keys(task.students);
+      Promise.all(
+        studentIds.map(id => 
+          fetch(`https://your-api.com/users/${id}`).then(res => res.json())
+        )
+      ).then(studentData => setStudents(studentData));
+    }
+  }, [task.students]);
+
   const handleStatusChange = (newStatus) => {
     const taskRef = ref(db, `tasks/${task.id}`);
     update(taskRef, { status: newStatus }).catch(err => console.error(err));
   };
 
   return (
-    <div className="bg-white p-3 rounded-md shadow-sm border">
-      <p className="font-semibold text-gray-800">{task.title}</p>
-      <div className="mt-2 pt-2 border-t flex justify-end space-x-2">
-        {task.status === 'todo' && (
-          <button onClick={() => handleStatusChange('doing')} className="text-xs text-blue-600 hover:underline">▶ Start</button>
-        )}
-        {task.status === 'doing' && (
-          <>
-            <button onClick={() => handleStatusChange('todo')} className="text-xs text-gray-600 hover:underline">◀ To Do</button>
-            <button onClick={() => handleStatusChange('done')} className="text-xs text-green-600 hover:underline">✔ Done</button>
-          </>
-        )}
-         {task.status === 'done' && (
-            <button onClick={() => handleStatusChange('doing')} className="text-xs text-gray-600 hover:underline">◀ Redo</button>
-        )}
+    <div className="bg-white p-4 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex-1">
+          <p className="font-semibold text-gray-800 mb-1">{task.title}</p>
+          <p className="text-sm text-gray-600 mb-2">{task.description}</p>
+          {task.dueDate && (
+            <p className="text-xs text-gray-500">
+              截止日期: {new Date(task.dueDate).toLocaleDateString()}
+            </p>
+          )}
+        </div>
+        <div className="flex flex-col items-end space-y-2">
+          {companyView && (
+            <button 
+              onClick={() => setShowAssignModal(true)}
+              className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200"
+            >
+              分配学生
+            </button>
+          )}
+          <div className="flex space-x-1">
+            {task.status === 'todo' && (
+              <button 
+                onClick={() => handleStatusChange('doing')} 
+                className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200"
+              >
+                ▶ 开始
+              </button>
+            )}
+            {task.status === 'doing' && (
+              <>
+                <button 
+                  onClick={() => handleStatusChange('todo')} 
+                  className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                >
+                  ◀ 待办
+                </button>
+                <button 
+                  onClick={() => handleStatusChange('done')} 
+                  className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200"
+                >
+                  ✔ 完成
+                </button>
+              </>
+            )}
+            {task.status === 'done' && (
+              <button 
+                onClick={() => handleStatusChange('doing')} 
+                className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+              >
+                ◀ 重新开始
+              </button>
+            )}
+          </div>
+        </div>
       </div>
+
+      {/* Assigned Students */}
+      {students.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <p className="text-xs text-gray-500 mb-2">分配的学生:</p>
+          <div className="flex flex-wrap gap-1">
+            {students.map((student, index) => (
+              <span 
+                key={index}
+                className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full"
+              >
+                {student.name || student.email}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Assign Student Modal */}
+      {showAssignModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h3 className="text-lg font-bold mb-4">分配学生到任务</h3>
+            <p className="text-sm text-gray-600 mb-4">选择要分配到此任务的学生</p>
+            {/* Student selection logic would go here */}
+            <div className="flex justify-end space-x-3">
+              <button 
+                onClick={() => setShowAssignModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                取消
+              </button>
+              <button 
+                onClick={() => {
+                  // Handle assignment
+                  setShowAssignModal(false);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                分配
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default function TaskBoard({ internshipId, studentId }) {
+export default function TaskBoard({ internshipId, studentId, companyView = false }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAddTask, setShowAddTask] = useState(false);
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    if (!internshipId || !studentId) return;
+    if (!internshipId) return;
+    
     const tasksRef = ref(db, 'tasks');
-    const q = query(tasksRef, orderByChild('internshipStudentId'), equalTo(`${internshipId}_${studentId}`));
+    let q;
+    
+    if (companyView) {
+      // Company view: show all tasks for this internship
+      q = query(tasksRef, orderByChild('internshipId'), equalTo(internshipId));
+    } else {
+      // Student view: show tasks assigned to this student
+      q = query(tasksRef, orderByChild('internshipStudentId'), equalTo(`${internshipId}_${studentId}`));
+    }
 
     const unsubscribe = onValue(q, (snapshot) => {
       const data = snapshot.val();
@@ -46,40 +157,121 @@ export default function TaskBoard({ internshipId, studentId }) {
     });
 
     return () => unsubscribe();
-  }, [internshipId, studentId]);
+  }, [internshipId, studentId, companyView]);
 
   const renderTasksByStatus = (status) => {
-    const filteredTasks = tasks.filter(task => task.status === status);
-    if (filteredTasks.length === 0) {
-        let message = 'No tasks yet.';
-        if(status === 'doing') message = 'No tasks in progress.';
-        if(status === 'done') message = 'No tasks completed.';
-        return <p className='text-sm text-center text-gray-500'>{message}</p>;
+    let filteredTasks = tasks.filter(task => task.status === status);
+    
+    if (filter !== 'all') {
+      filteredTasks = filteredTasks.filter(task => {
+        // Add additional filtering logic here if needed
+        return true;
+      });
     }
-    return filteredTasks.map(task => <TaskItem key={task.id} task={task} />);
+
+    if (filteredTasks.length === 0) {
+      let message = '暂无任务';
+      if (status === 'doing') message = '暂无进行中的任务';
+      if (status === 'done') message = '暂无已完成的任务';
+      return (
+        <div className="text-center py-8">
+          <div className="text-4xl mb-2">📋</div>
+          <p className="text-sm text-gray-500">{message}</p>
+        </div>
+      );
+    }
+    
+    return filteredTasks.map(task => (
+      <TaskItem 
+        key={task.id} 
+        task={task} 
+        companyView={companyView}
+      />
+    ));
   };
 
+  const getStatusStats = () => {
+    const todo = tasks.filter(t => t.status === 'todo').length;
+    const doing = tasks.filter(t => t.status === 'doing').length;
+    const done = tasks.filter(t => t.status === 'done').length;
+    return { todo, doing, done };
+  };
+
+  const stats = getStatusStats();
+
   if (loading) {
-    return <p>Loading task board...</p>;
+    return (
+      <div className="text-center py-10">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">加载任务看板...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-        <h4 className="text-lg font-bold mb-4">Project Task Board</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gray-200 p-3 rounded-lg">
-                <h5 className="font-bold mb-3 text-center">To Do</h5>
-                <div className="space-y-3">{renderTasksByStatus('todo')}</div>
-            </div>
-            <div className="bg-blue-100 p-3 rounded-lg">
-                <h5 className="font-bold mb-3 text-center">Doing</h5>
-                <div className="space-y-3">{renderTasksByStatus('doing')}</div>
-            </div>
-            <div className="bg-green-100 p-3 rounded-lg">
-                <h5 className="font-bold mb-3 text-center">Done</h5>
-                <div className="space-y-3">{renderTasksByStatus('done')}</div>
-            </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h4 className="text-xl font-bold text-gray-800">项目任务看板</h4>
+          <p className="text-sm text-gray-600">管理项目进度和任务分配</p>
         </div>
+        {companyView && (
+          <button 
+            onClick={() => setShowAddTask(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+          >
+            <span className="mr-2">+</span>
+            添加任务
+          </button>
+        )}
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-gray-50 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-gray-600">{stats.todo}</div>
+          <div className="text-sm text-gray-500">待办</div>
+        </div>
+        <div className="bg-blue-50 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-blue-600">{stats.doing}</div>
+          <div className="text-sm text-blue-500">进行中</div>
+        </div>
+        <div className="bg-green-50 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-green-600">{stats.done}</div>
+          <div className="text-sm text-green-500">已完成</div>
+        </div>
+      </div>
+
+      {/* Task Board */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h5 className="font-bold mb-4 text-center text-gray-700">📋 待办</h5>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {renderTasksByStatus('todo')}
+          </div>
+        </div>
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <h5 className="font-bold mb-4 text-center text-blue-700">🔄 进行中</h5>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {renderTasksByStatus('doing')}
+          </div>
+        </div>
+        <div className="bg-green-50 p-4 rounded-lg">
+          <h5 className="font-bold mb-4 text-center text-green-700">✅ 已完成</h5>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {renderTasksByStatus('done')}
+          </div>
+        </div>
+      </div>
+
+      {/* Add Task Modal */}
+      {showAddTask && (
+        <AddTaskForm 
+          internshipId={internshipId}
+          onClose={() => setShowAddTask(false)}
+        />
+      )}
     </div>
   );
 }

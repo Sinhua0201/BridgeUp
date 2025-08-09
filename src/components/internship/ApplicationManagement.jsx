@@ -26,35 +26,108 @@ const ApplicationItem = ({ application, internshipTitle }) => {
       .catch(err => console.error("Failed to update status: ", err));
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'approved': return 'bg-green-100 text-green-800';
+      case 'rejected': return 'bg-red-100 text-red-800';
+      case 'completed': return 'bg-blue-100 text-blue-800';
+      case 'in_progress': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'pending': return '审核中';
+      case 'approved': return '已通过';
+      case 'rejected': return '已拒绝';
+      case 'completed': return '已完成';
+      case 'in_progress': return '进行中';
+      default: return status;
+    }
+  };
+
   return (
-    <div className="bg-gray-50 p-4 rounded-lg border">
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="font-semibold text-gray-800">{studentData ? studentData.fullName : 'Loading...'}</p>
-          <p className="text-sm text-gray-500">Applied for: <span className="font-medium">{internshipTitle}</span></p>
-        </div>
-        <div className="flex items-center space-x-3">
-          {application.status === 'pending' ? (
-            <>
-              <button onClick={() => handleUpdateStatus('approved')} className="px-3 py-1 bg-green-500 text-white rounded-md text-sm hover:bg-green-600">Approve</button>
-              <button onClick={() => handleUpdateStatus('rejected')} className="px-3 py-1 bg-red-500 text-white rounded-md text-sm hover:bg-red-600">Reject</button>
-            </>
-          ) : (
-            <p className={`font-semibold text-sm capitalize px-3 py-1 rounded-full ${application.status === 'approved' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
-              {application.status}
+    <div className="bg-white p-6 rounded-lg shadow-md border hover:shadow-lg transition-shadow">
+      <div className="flex justify-between items-start">
+        <div className="flex items-center">
+          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+            <span className="text-xl">👤</span>
+          </div>
+          <div>
+            <p className="font-semibold text-gray-800 text-lg">
+              {studentData ? studentData.fullName : '加载中...'}
             </p>
+            <p className="text-sm text-gray-500">
+              申请项目: <span className="font-medium text-blue-600">{internshipTitle}</span>
+            </p>
+            <p className="text-xs text-gray-400">
+              申请时间: {new Date(application.appliedAt).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col items-end space-y-2">
+          <span className={`font-semibold text-sm px-3 py-1 rounded-full ${getStatusColor(application.status)}`}>
+            {getStatusText(application.status)}
+          </span>
+          {application.status === 'pending' && (
+            <div className="flex space-x-2">
+              <button 
+                onClick={() => handleUpdateStatus('approved')} 
+                className="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors"
+              >
+                通过
+              </button>
+              <button 
+                onClick={() => handleUpdateStatus('rejected')} 
+                className="px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition-colors"
+              >
+                拒绝
+              </button>
+            </div>
           )}
-          {application.status === 'approved' && (
-            <button onClick={() => setShowProject(!showProject)} className="px-3 py-1 bg-indigo-500 text-white rounded-md text-sm hover:bg-indigo-600">
-              {showProject ? 'Hide Project' : 'Manage Project'}
+          {(application.status === 'approved' || application.status === 'in_progress') && (
+            <button 
+              onClick={() => setShowProject(!showProject)} 
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 transition-colors"
+            >
+              {showProject ? '隐藏项目' : '管理项目'}
             </button>
           )}
         </div>
       </div>
+
       {showProject && (
-        <div className="mt-4 border-t pt-4">
-          <TaskBoard internshipId={application.internshipId} studentId={application.studentId} />
-          <AddTaskForm internshipId={application.internshipId} studentId={application.studentId} />
+        <div className="mt-6 border-t border-gray-100 pt-6">
+          <div className="mb-4">
+            <h5 className="text-lg font-semibold text-gray-800 mb-2">项目任务管理</h5>
+            <p className="text-sm text-gray-600">为学生分配和管理项目任务</p>
+          </div>
+          <TaskBoard 
+            internshipId={application.internshipId} 
+            studentId={application.studentId}
+            companyView={true}
+          />
+        </div>
+      )}
+
+      {application.status === 'completed' && (
+        <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <span className="text-2xl mr-2">🏆</span>
+              <span className="text-sm text-green-700">项目已完成！</span>
+            </div>
+            <div className="flex space-x-2">
+              <button className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
+                生成证书
+              </button>
+              <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                写推荐信
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -64,6 +137,13 @@ const ApplicationItem = ({ application, internshipTitle }) => {
 export default function ApplicationManagement() {
   const [applicationsByInternship, setApplicationsByInternship] = useState({});
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    approved: 0,
+    completed: 0,
+    rejected: 0
+  });
 
   useEffect(() => {
     const currentUser = auth.currentUser;
@@ -76,11 +156,22 @@ export default function ApplicationManagement() {
       const applicationsData = snapshot.val();
       if (!applicationsData) {
         setApplicationsByInternship({});
+        setStats({ total: 0, pending: 0, approved: 0, completed: 0, rejected: 0 });
         setLoading(false);
         return;
       }
 
       const loadedApplications = Object.keys(applicationsData).map(key => ({ id: key, ...applicationsData[key] }));
+
+      // Calculate stats
+      const newStats = {
+        total: loadedApplications.length,
+        pending: loadedApplications.filter(app => app.status === 'pending').length,
+        approved: loadedApplications.filter(app => app.status === 'approved').length,
+        completed: loadedApplications.filter(app => app.status === 'completed').length,
+        rejected: loadedApplications.filter(app => app.status === 'rejected').length
+      };
+      setStats(newStats);
 
       const fetchTitlesAndGroup = async () => {
         const grouped = {};
@@ -104,18 +195,58 @@ export default function ApplicationManagement() {
   }, []);
 
   if (loading) {
-    return <p className="text-center py-5">Loading applications...</p>;
+    return (
+      <div className="text-center py-10">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">加载申请数据...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="mt-10">
-      <h3 className="text-xl font-bold text-gray-800 mb-4">Internship Applications</h3>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">申请管理</h3>
+        <p className="text-gray-600">管理学生申请和项目进度</p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
+          <div className="text-sm text-blue-700">总申请</div>
+        </div>
+        <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+          <div className="text-sm text-yellow-700">待审核</div>
+        </div>
+        <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
+          <div className="text-sm text-green-700">已通过</div>
+        </div>
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-purple-600">{stats.completed}</div>
+          <div className="text-sm text-purple-700">已完成</div>
+        </div>
+        <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+          <div className="text-sm text-red-700">已拒绝</div>
+        </div>
+      </div>
+
+      {/* Applications */}
       {Object.keys(applicationsByInternship).length > 0 ? (
         <div className="space-y-6">
           {Object.entries(applicationsByInternship).map(([internshipTitle, applications]) => (
-            <div key={internshipTitle}>
-              <h4 className="font-bold text-lg text-indigo-700 mb-2">{internshipTitle}</h4>
-              <div className="space-y-3">
+            <div key={internshipTitle} className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-bold text-lg text-indigo-700">{internshipTitle}</h4>
+                <span className="text-sm text-gray-500">
+                  {applications.length} 个申请
+                </span>
+              </div>
+              <div className="space-y-4">
                 {applications.map(app => (
                   <ApplicationItem key={app.id} application={app} internshipTitle={internshipTitle} />
                 ))}
@@ -124,7 +255,14 @@ export default function ApplicationManagement() {
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500 py-10 bg-gray-50 rounded-md">You have not received any applications yet.</p>
+        <div className="text-center py-10 bg-gray-50 rounded-lg">
+          <div className="text-4xl mb-4">📋</div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">还没有收到申请</h3>
+          <p className="text-gray-600 mb-4">发布更多 Micro-Internship 项目来吸引学生申请</p>
+          <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+            发布新项目
+          </button>
+        </div>
       )}
     </div>
   );

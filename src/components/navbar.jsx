@@ -145,7 +145,7 @@ export default function Navbar() {
               <button 
                 onClick={() => setShowLoginModal(true)} 
                 className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 shadow-lg">
-                Get Started
+                Login
               </button>
             )}
           </div>
@@ -157,7 +157,7 @@ export default function Navbar() {
               className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200">
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-          </div>
+          </div>np
         </div>
       </div>
 
