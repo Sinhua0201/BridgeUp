@@ -59,15 +59,15 @@ export default function CompanyView() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">企业管理中心</h2>
-          <p className="text-gray-600">管理您的 Micro-Internship 项目和申请</p>
+          <h2 className="text-2xl font-bold text-gray-800">Company Management Center</h2>
+          <p className="text-gray-600">Manage your Micro-Internship projects and applications</p>
         </div>
         <button 
           onClick={() => setIsCreating(true)} 
           className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
         >
           <span className="mr-2">+</span>
-          发布新项目
+          Post New Project
         </button>
       </div>
 
@@ -84,7 +84,7 @@ export default function CompanyView() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            项目列表
+            Internship List
           </button>
           <button
             onClick={() => setActiveTab('applications')}
@@ -94,7 +94,7 @@ export default function CompanyView() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            申请管理
+            Applications
           </button>
           <button
             onClick={() => setActiveTab('taskboard')}
@@ -104,7 +104,7 @@ export default function CompanyView() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            任务看板
+            Task Board
           </button>
         </nav>
       </div>
@@ -113,7 +113,7 @@ export default function CompanyView() {
       {loading ? (
         <div className="text-center py-10">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">加载中...</p>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       ) : (
         <>
@@ -132,9 +132,9 @@ export default function CompanyView() {
                           </div>
                         </div>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(internship.status)}`}>
-                          {internship.status === 'open' ? '开放中' : 
-                           internship.status === 'closed' ? '已关闭' : 
-                           internship.status === 'in-progress' ? '进行中' : internship.status}
+                          {internship.status === 'open' ? 'Open' : 
+                           internship.status === 'closed' ? 'Closed' : 
+                           internship.status === 'in-progress' ? 'In Progress' : internship.status}
                         </span>
                       </div>
                       
@@ -142,20 +142,20 @@ export default function CompanyView() {
                       
                       <div className="space-y-2 text-sm text-gray-500">
                         <div className="flex justify-between">
-                          <span>⏱️ 时长:</span>
+                          <span>⏱️ Duration:</span>
                           <span className="font-medium">{internship.duration}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span>📍 地点:</span>
+                          <span>📍 Location:</span>
                           <span className="font-medium">{internship.location}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span>👥 学生数:</span>
+                          <span>👥 Students:</span>
                           <span className="font-medium">{internship.applications || 0}/{internship.maxStudents}</span>
                         </div>
                         {internship.isPaid && (
                           <div className="flex justify-between">
-                            <span>💰 津贴:</span>
+                            <span>💰 Compensation:</span>
                             <span className="font-medium text-green-600">{internship.compensation}</span>
                           </div>
                         )}
@@ -164,7 +164,7 @@ export default function CompanyView() {
                       <div className="mt-4 pt-4 border-t border-gray-100">
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-gray-400">
-                            发布于 {new Date(internship.createdAt).toLocaleDateString()}
+                            Posted on {new Date(internship.createdAt).toLocaleDateString()}
                           </span>
                           <button
                             onClick={() => {
@@ -173,7 +173,7 @@ export default function CompanyView() {
                             }}
                             className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                           >
-                            查看任务 →
+                            View Tasks →
                           </button>
                         </div>
                       </div>
@@ -183,13 +183,13 @@ export default function CompanyView() {
               ) : (
                 <div className="text-center py-10 bg-gray-50 rounded-lg">
                   <div className="text-4xl mb-4">📋</div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">还没有发布项目</h3>
-                  <p className="text-gray-600 mb-4">开始发布您的第一个 Micro-Internship 项目</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No internships posted yet</h3>
+                  <p className="text-gray-600 mb-4">Start by posting your first Micro-Internship project</p>
                   <button 
                     onClick={() => setIsCreating(true)} 
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                   >
-                    发布项目
+                    Post Project
                   </button>
                 </div>
               )}
@@ -205,12 +205,12 @@ export default function CompanyView() {
               {selectedInternship ? (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold">任务看板 - {selectedInternship.title}</h3>
+                    <h3 className="text-xl font-bold">Task Board - {selectedInternship.title}</h3>
                     <button
                       onClick={() => setSelectedInternship(null)}
                       className="text-gray-500 hover:text-gray-700"
                     >
-                      返回项目列表
+                      Back to Internship List
                     </button>
                   </div>
                   <TaskBoard 
@@ -221,8 +221,8 @@ export default function CompanyView() {
               ) : (
                 <div className="text-center py-10">
                   <div className="text-4xl mb-4">📋</div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">选择项目查看任务</h3>
-                  <p className="text-gray-600">请从项目列表中选择一个项目来查看其任务看板</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Select an internship to view tasks</h3>
+                  <p className="text-gray-600">Please choose a project from the internship list to see its task board</p>
                 </div>
               )}
             </div>

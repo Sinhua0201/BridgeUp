@@ -87,7 +87,7 @@ export default function CreateInternship({ onClose }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl m-4">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">发布 Micro-Internship</h2>
+          <h2 className="text-2xl font-bold">Create Micro-Internship</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -100,13 +100,13 @@ export default function CreateInternship({ onClose }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                项目标题 (中文) *
+                Project Title (Chinese) *
               </label>
               <input 
                 type="text" 
                 value={title} 
                 onChange={e => setTitle(e.target.value)} 
-                placeholder="例如：社交媒体营销策划" 
+                placeholder="e.g., Social Media Marketing (Chinese)" 
                 className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
               />
             </div>
@@ -128,12 +128,12 @@ export default function CreateInternship({ onClose }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                项目描述 (中文) *
+                Project Description (Chinese) *
               </label>
               <textarea 
                 value={description} 
                 onChange={e => setDescription(e.target.value)} 
-                placeholder="详细描述项目内容、要求和期望成果..." 
+                placeholder="Detailed project description, requirements, and expected outcomes (Chinese)..." 
                 className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
                 rows="4"
               />
@@ -145,7 +145,7 @@ export default function CreateInternship({ onClose }) {
               <textarea 
                 value={descriptionEn} 
                 onChange={e => setDescriptionEn(e.target.value)} 
-                placeholder="Detailed project description, requirements and expected outcomes..." 
+                placeholder="Detailed project description, requirements, and expected outcomes..." 
                 className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
                 rows="4"
               />
@@ -156,22 +156,22 @@ export default function CreateInternship({ onClose }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                项目时长 *
+                Project Duration *
               </label>
               <select 
                 value={duration} 
                 onChange={e => setDuration(e.target.value)} 
                 className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="1-2 weeks">1-2 周</option>
-                <option value="2-4 weeks">2-4 周</option>
-                <option value="4-6 weeks">4-6 周</option>
-                <option value="6-8 weeks">6-8 周</option>
+                <option value="1-2 weeks">1-2 weeks</option>
+                <option value="2-4 weeks">2-4 weeks</option>
+                <option value="4-6 weeks">4-6 weeks</option>
+                <option value="6-8 weeks">6-8 weeks</option>
               </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                任务类型 *
+                Task Type *
               </label>
               <select 
                 value={taskType} 
@@ -185,7 +185,7 @@ export default function CreateInternship({ onClose }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                工作地点
+                Location
               </label>
               <select 
                 value={location} 
@@ -203,7 +203,7 @@ export default function CreateInternship({ onClose }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                最大学生数量
+                Max Number of Students
               </label>
               <input 
                 type="number" 
@@ -222,14 +222,14 @@ export default function CreateInternship({ onClose }) {
                   onChange={e => setIsPaid(e.target.checked)}
                   className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <span className="text-sm font-medium text-gray-700">提供津贴</span>
+                <span className="text-sm font-medium text-gray-700">Provide Compensation</span>
               </label>
               {isPaid && (
                 <input 
                   type="text" 
                   value={compensation} 
                   onChange={e => setCompensation(e.target.value)} 
-                  placeholder="例如：RM 500" 
+                  placeholder="e.g., RM 500" 
                   className="flex-1 border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
                 />
               )}
@@ -244,14 +244,14 @@ export default function CreateInternship({ onClose }) {
               onClick={onClose} 
               className="px-6 py-3 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
             >
-              取消
+              Cancel
             </button>
             <button 
               type="submit" 
               disabled={loading} 
               className="px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
             >
-              {loading ? '发布中...' : '发布 Micro-Internship'}
+              {loading ? 'Posting...' : 'Create Micro-Internship'}
             </button>
           </div>
         </form>

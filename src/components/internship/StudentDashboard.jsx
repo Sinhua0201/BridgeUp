@@ -34,11 +34,11 @@ const ApplicationStatusCard = ({ application }) => {
   };
 
   const statusText = {
-    pending: '审核中',
-    approved: '已通过',
-    rejected: '已拒绝',
-    completed: '已完成',
-    in_progress: '进行中'
+    pending: 'Pending',
+    approved: 'Approved',
+    rejected: 'Rejected',
+    completed: 'Completed',
+    in_progress: 'In Progress'
   };
 
   const getTaskTypeIcon = (taskType) => {
@@ -71,7 +71,7 @@ const ApplicationStatusCard = ({ application }) => {
           </div>
         </div>
         <div className="text-right text-sm text-gray-500">
-          <div>申请时间</div>
+          <div>Applied on</div>
           <div>{new Date(application.appliedAt).toLocaleDateString()}</div>
         </div>
       </div>
@@ -102,12 +102,12 @@ const ApplicationStatusCard = ({ application }) => {
       {(application.status === 'approved' || application.status === 'in_progress') && (
         <div className="border-t border-gray-100 pt-4">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">项目进度</span>
+            <span className="text-sm text-gray-600">Project Progress</span>
             <button 
               onClick={() => setShowTasks(!showTasks)}
               className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700 transition-colors"
             >
-              {showTasks ? '隐藏任务' : '查看任务'}
+              {showTasks ? 'Hide Tasks' : 'View Tasks'}
             </button>
           </div>
           {showTasks && (
@@ -126,14 +126,14 @@ const ApplicationStatusCard = ({ application }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <span className="text-2xl mr-2">🏆</span>
-              <span className="text-sm text-gray-600">项目已完成！</span>
+              <span className="text-sm text-gray-600">Project Completed!</span>
             </div>
             <div className="flex space-x-2">
               <button className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
-                下载证书
+                Download Certificate
               </button>
               <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
-                查看作品集
+                View Portfolio
               </button>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function StudentDashboard() {
     return (
       <div className="text-center py-10">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">加载您的申请...</p>
+        <p className="mt-4 text-gray-600">Loading your applications...</p>
       </div>
     );
   }
@@ -197,29 +197,29 @@ export default function StudentDashboard() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
-          <div className="text-sm text-blue-700">总申请</div>
+          <div className="text-sm text-blue-700">Total Applications</div>
         </div>
         <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
-          <div className="text-sm text-yellow-700">审核中</div>
+          <div className="text-sm text-yellow-700">Pending</div>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
-          <div className="text-sm text-green-700">已通过</div>
+          <div className="text-sm text-green-700">Approved</div>
         </div>
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-purple-600">{stats.completed}</div>
-          <div className="text-sm text-purple-700">已完成</div>
+          <div className="text-sm text-purple-700">Completed</div>
         </div>
         <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
-          <div className="text-sm text-red-700">已拒绝</div>
+          <div className="text-sm text-red-700">Rejected</div>
         </div>
       </div>
 
       {/* Applications */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-bold mb-4">我的申请</h3>
+        <h3 className="text-xl font-bold mb-4">My Applications</h3>
         {applications.length > 0 ? (
           <div className="space-y-4">
             {applications.map(app => (
@@ -229,10 +229,10 @@ export default function StudentDashboard() {
         ) : (
           <div className="text-center py-10 bg-gray-50 rounded-lg">
             <div className="text-4xl mb-4">📋</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">还没有申请任何项目</h3>
-            <p className="text-gray-600 mb-4">开始申请您的第一个 Micro-Internship 项目</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
+            <p className="text-gray-600 mb-4">Start applying to your first Micro-Internship project</p>
             <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-              浏览项目
+              Browse Projects
             </button>
           </div>
         )}

@@ -39,11 +39,11 @@ const ApplicationItem = ({ application, internshipTitle }) => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'pending': return '审核中';
-      case 'approved': return '已通过';
-      case 'rejected': return '已拒绝';
-      case 'completed': return '已完成';
-      case 'in_progress': return '进行中';
+      case 'pending': return 'Pending Review';
+      case 'approved': return 'Approved';
+      case 'rejected': return 'Rejected';
+      case 'completed': return 'Completed';
+      case 'in_progress': return 'In Progress';
       default: return status;
     }
   };
@@ -57,13 +57,13 @@ const ApplicationItem = ({ application, internshipTitle }) => {
           </div>
           <div>
             <p className="font-semibold text-gray-800 text-lg">
-              {studentData ? studentData.fullName : '加载中...'}
+              {studentData ? studentData.fullName : 'Loading...'}
             </p>
             <p className="text-sm text-gray-500">
-              申请项目: <span className="font-medium text-blue-600">{internshipTitle}</span>
+              Applied for: <span className="font-medium text-blue-600">{internshipTitle}</span>
             </p>
             <p className="text-xs text-gray-400">
-              申请时间: {new Date(application.appliedAt).toLocaleDateString()}
+              Applied on: {new Date(application.appliedAt).toLocaleDateString()}
             </p>
           </div>
         </div>
@@ -77,13 +77,13 @@ const ApplicationItem = ({ application, internshipTitle }) => {
                 onClick={() => handleUpdateStatus('approved')} 
                 className="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors"
               >
-                通过
+                Approve
               </button>
               <button 
                 onClick={() => handleUpdateStatus('rejected')} 
                 className="px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition-colors"
               >
-                拒绝
+                Reject
               </button>
             </div>
           )}
@@ -92,7 +92,7 @@ const ApplicationItem = ({ application, internshipTitle }) => {
               onClick={() => setShowProject(!showProject)} 
               className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 transition-colors"
             >
-              {showProject ? '隐藏项目' : '管理项目'}
+              {showProject ? 'Hide Project' : 'Manage Project'}
             </button>
           )}
         </div>
@@ -101,8 +101,8 @@ const ApplicationItem = ({ application, internshipTitle }) => {
       {showProject && (
         <div className="mt-6 border-t border-gray-100 pt-6">
           <div className="mb-4">
-            <h5 className="text-lg font-semibold text-gray-800 mb-2">项目任务管理</h5>
-            <p className="text-sm text-gray-600">为学生分配和管理项目任务</p>
+            <h5 className="text-lg font-semibold text-gray-800 mb-2">Project Task Management</h5>
+            <p className="text-sm text-gray-600">Assign and manage tasks for the student</p>
           </div>
           <TaskBoard 
             internshipId={application.internshipId} 
@@ -117,14 +117,14 @@ const ApplicationItem = ({ application, internshipTitle }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <span className="text-2xl mr-2">🏆</span>
-              <span className="text-sm text-green-700">项目已完成！</span>
+              <span className="text-sm text-green-700">Project Completed!</span>
             </div>
             <div className="flex space-x-2">
               <button className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
-                生成证书
+                Generate Certificate
               </button>
               <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
-                写推荐信
+                Write Recommendation Letter
               </button>
             </div>
           </div>
@@ -198,7 +198,7 @@ export default function ApplicationManagement() {
     return (
       <div className="text-center py-10">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">加载申请数据...</p>
+        <p className="mt-4 text-gray-600">Loading applications...</p>
       </div>
     );
   }
@@ -207,31 +207,31 @@ export default function ApplicationManagement() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">申请管理</h3>
-        <p className="text-gray-600">管理学生申请和项目进度</p>
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">Application Management</h3>
+        <p className="text-gray-600">Manage student applications and project progress</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
-          <div className="text-sm text-blue-700">总申请</div>
+          <div className="text-sm text-blue-700">Total Applications</div>
         </div>
         <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
-          <div className="text-sm text-yellow-700">待审核</div>
+          <div className="text-sm text-yellow-700">Pending</div>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
-          <div className="text-sm text-green-700">已通过</div>
+          <div className="text-sm text-green-700">Approved</div>
         </div>
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-purple-600">{stats.completed}</div>
-          <div className="text-sm text-purple-700">已完成</div>
+          <div className="text-sm text-purple-700">Completed</div>
         </div>
         <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
-          <div className="text-sm text-red-700">已拒绝</div>
+          <div className="text-sm text-red-700">Rejected</div>
         </div>
       </div>
 
@@ -243,7 +243,7 @@ export default function ApplicationManagement() {
               <div className="flex items-center justify-between mb-4">
                 <h4 className="font-bold text-lg text-indigo-700">{internshipTitle}</h4>
                 <span className="text-sm text-gray-500">
-                  {applications.length} 个申请
+                  {applications.length} Application(s)
                 </span>
               </div>
               <div className="space-y-4">
@@ -257,10 +257,10 @@ export default function ApplicationManagement() {
       ) : (
         <div className="text-center py-10 bg-gray-50 rounded-lg">
           <div className="text-4xl mb-4">📋</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">还没有收到申请</h3>
-          <p className="text-gray-600 mb-4">发布更多 Micro-Internship 项目来吸引学生申请</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
+          <p className="text-gray-600 mb-4">Post more Micro-Internship projects to attract students</p>
           <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-            发布新项目
+            Post New Project
           </button>
         </div>
       )}

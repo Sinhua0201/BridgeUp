@@ -57,10 +57,10 @@ const InternshipCard = ({ internship, onApply, hasApplied }) => {
             onClick={() => setShowEnglish(!showEnglish)}
             className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
           >
-            {showEnglish ? '中文' : 'English'}
+            {showEnglish ? 'Chinese' : 'English'}
           </button>
           <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-            {internship.applications || 0}/{internship.maxStudents} 学生
+            {internship.applications || 0}/{internship.maxStudents} students
           </span>
         </div>
       </div>
@@ -92,14 +92,14 @@ const InternshipCard = ({ internship, onApply, hasApplied }) => {
 
       <div className="flex justify-between items-center pt-4 border-t border-gray-100">
         <div className="text-xs text-gray-500">
-          发布于 {new Date(internship.createdAt).toLocaleDateString()}
+          Posted on {new Date(internship.createdAt).toLocaleDateString()}
         </div>
         <button 
           onClick={() => onApply(internship.id, internship.companyId)}
           disabled={hasApplied}
           className="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
         >
-          {hasApplied ? '已申请' : '立即申请'}
+          {hasApplied ? 'Applied' : 'Apply Now'}
         </button>
       </div>
     </div>
@@ -147,7 +147,7 @@ export default function InternshipList() {
 
   const handleApply = (internshipId, companyId) => {
     if (!currentUser) {
-      alert('请先登录再申请项目');
+      alert('Please log in to apply for a project.');
       return;
     }
     const applicationsRef = ref(db, 'applications');
@@ -178,7 +178,7 @@ export default function InternshipList() {
     return (
       <div className="text-center py-10">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">加载可用项目...</p>
+        <p className="mt-4 text-gray-600">Loading available projects...</p>
       </div>
     );
   }
@@ -187,42 +187,42 @@ export default function InternshipList() {
     <div className="space-y-6">
       {/* Filters */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-lg font-bold mb-4">筛选项目</h3>
+        <h3 className="text-lg font-bold mb-4">Filter Projects</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">任务类型</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Task Type</label>
             <select 
               value={filters.taskType} 
               onChange={e => setFilters({...filters, taskType: e.target.value})}
               className="w-full border border-gray-300 p-2 rounded-md"
             >
-              <option value="all">所有类型</option>
+              <option value="all">All Types</option>
               {taskTypes.map(type => (
                 <option key={type} value={type}>{type}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">地点</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
             <select 
               value={filters.location} 
               onChange={e => setFilters({...filters, location: e.target.value})}
               className="w-full border border-gray-300 p-2 rounded-md"
             >
-              <option value="all">所有地点</option>
+              <option value="all">All Locations</option>
               {locations.map(location => (
                 <option key={location} value={location}>{location}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">时长</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
             <select 
               value={filters.duration} 
               onChange={e => setFilters({...filters, duration: e.target.value})}
               className="w-full border border-gray-300 p-2 rounded-md"
             >
-              <option value="all">所有时长</option>
+              <option value="all">All Durations</option>
               {durations.map(duration => (
                 <option key={duration} value={duration}>{duration}</option>
               ))}
@@ -236,7 +236,7 @@ export default function InternshipList() {
                 onChange={e => setFilters({...filters, isPaid: e.target.checked})}
                 className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <span className="text-sm font-medium text-gray-700">仅显示有津贴的项目</span>
+              <span className="text-sm font-medium text-gray-700">Only show paid projects</span>
             </label>
           </div>
         </div>
@@ -245,10 +245,10 @@ export default function InternshipList() {
       {/* Results */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-bold">找到 {filteredInternships.length} 个项目</h3>
+          <h3 className="text-lg font-bold">Found {filteredInternships.length} project(s)</h3>
           {filteredInternships.length > 0 && (
             <div className="text-sm text-gray-500">
-              显示 {filteredInternships.length} 个可用项目
+              Showing {filteredInternships.length} available project(s)
             </div>
           )}
         </div>
@@ -265,8 +265,8 @@ export default function InternshipList() {
         ) : (
           <div className="text-center py-10 bg-gray-50 rounded-lg">
             <div className="text-4xl mb-4">🔍</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">没有找到匹配的项目</h3>
-            <p className="text-gray-600 mb-4">尝试调整筛选条件或稍后再查看</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No matching projects</h3>
+            <p className="text-gray-600 mb-4">Try adjusting the filters or check back later</p>
             <button 
               onClick={() => setFilters({
                 taskType: 'all',
@@ -276,7 +276,7 @@ export default function InternshipList() {
               })}
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
-              清除筛选
+              Clear Filters
             </button>
           </div>
         )}

@@ -40,8 +40,8 @@ export default function StudentPortfolio() {
     if (projects.length >= 1) {
       newBadges.push({
         id: 'first-project',
-        name: '新手实习生',
-        description: '完成第一个 Micro-Internship 项目',
+        name: 'Rookie Intern',
+        description: 'Completed the first Micro-Internship project',
         icon: '🌟',
         color: 'bg-yellow-100 text-yellow-800'
       });
@@ -50,8 +50,8 @@ export default function StudentPortfolio() {
     if (projects.length >= 3) {
       newBadges.push({
         id: 'silver-badge',
-        name: '银牌实习生',
-        description: '完成 3 个 Micro-Internship 项目',
+        name: 'Silver Intern',
+        description: 'Completed 3 Micro-Internship projects',
         icon: '🥈',
         color: 'bg-gray-100 text-gray-800'
       });
@@ -60,8 +60,8 @@ export default function StudentPortfolio() {
     if (projects.length >= 5) {
       newBadges.push({
         id: 'gold-badge',
-        name: '金牌实习生',
-        description: '完成 5 个 Micro-Internship 项目',
+        name: 'Gold Intern',
+        description: 'Completed 5 Micro-Internship projects',
         icon: '🥇',
         color: 'bg-yellow-100 text-yellow-800'
       });
@@ -79,8 +79,8 @@ export default function StudentPortfolio() {
       if (count >= 2) {
         newBadges.push({
           id: `skill-${skill}`,
-          name: `${skill} 专家`,
-          description: `在 ${skill} 领域完成 ${count} 个项目`,
+          name: `${skill} Expert`,
+          description: `Completed ${count} projects in ${skill}`,
           icon: getSkillIcon(skill),
           color: 'bg-blue-100 text-blue-800'
         });
@@ -123,7 +123,7 @@ export default function StudentPortfolio() {
     return (
       <div className="text-center py-10">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">加载作品集...</p>
+        <p className="mt-4 text-gray-600">Loading portfolio...</p>
       </div>
     );
   }
@@ -132,29 +132,29 @@ export default function StudentPortfolio() {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">我的作品集</h3>
-        <p className="text-gray-600">展示您的 Micro-Internship 成就和技能</p>
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">My Portfolio</h3>
+        <p className="text-gray-600">Showcase your Micro-Internship achievements and skills</p>
       </div>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg text-center">
           <div className="text-3xl font-bold text-blue-600">{completedProjects.length}</div>
-          <div className="text-sm text-blue-700">完成项目</div>
+          <div className="text-sm text-blue-700">Completed Projects</div>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg text-center">
           <div className="text-3xl font-bold text-green-600">{badges.length}</div>
-          <div className="text-sm text-green-700">获得徽章</div>
+          <div className="text-sm text-green-700">Badges Earned</div>
         </div>
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg text-center">
           <div className="text-3xl font-bold text-purple-600">{certificates.length}</div>
-          <div className="text-sm text-purple-700">数字证书</div>
+          <div className="text-sm text-purple-700">Certificates</div>
         </div>
         <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-lg text-center">
           <div className="text-3xl font-bold text-orange-600">
             {completedProjects.length > 0 ? Math.floor(completedProjects.length * 20) : 0}
           </div>
-          <div className="text-sm text-orange-700">经验点数</div>
+          <div className="text-sm text-orange-700">Experience Points</div>
         </div>
       </div>
 
@@ -169,7 +169,7 @@ export default function StudentPortfolio() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            总览
+            Overview
           </button>
           <button
             onClick={() => setActiveSection('projects')}
@@ -179,7 +179,7 @@ export default function StudentPortfolio() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            项目作品
+            Projects
           </button>
           <button
             onClick={() => setActiveSection('badges')}
@@ -189,7 +189,7 @@ export default function StudentPortfolio() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            成就徽章
+            Badges
           </button>
           <button
             onClick={() => setActiveSection('certificates')}
@@ -199,7 +199,7 @@ export default function StudentPortfolio() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            数字证书
+            Certificates
           </button>
         </nav>
       </div>
@@ -208,7 +208,7 @@ export default function StudentPortfolio() {
       {activeSection === 'overview' && (
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h4 className="text-lg font-bold mb-4">技能概览</h4>
+            <h4 className="text-lg font-bold mb-4">Skills Overview</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {Object.entries(
                 completedProjects.reduce((acc, project) => {
@@ -220,7 +220,7 @@ export default function StudentPortfolio() {
                 <div key={skill} className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="text-2xl mb-2">{getSkillIcon(skill)}</div>
                   <div className="font-medium text-sm">{skill}</div>
-                  <div className="text-xs text-gray-500">{count} 个项目</div>
+                  <div className="text-xs text-gray-500">{count} project(s)</div>
                 </div>
               ))}
             </div>
@@ -240,12 +240,12 @@ export default function StudentPortfolio() {
                       <h4 className="font-bold text-lg">{project.title || 'Micro-Internship Project'}</h4>
                       <p className="text-gray-600">{project.companyName || 'Company'}</p>
                       <p className="text-sm text-gray-500">
-                        完成于 {new Date(project.completedAt || project.appliedAt).toLocaleDateString()}
+                        Completed on {new Date(project.completedAt || project.appliedAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
                   <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                    已完成
+                    Completed
                   </span>
                 </div>
               </div>
@@ -253,8 +253,8 @@ export default function StudentPortfolio() {
           ) : (
             <div className="text-center py-10 bg-gray-50 rounded-lg">
               <div className="text-4xl mb-4">📋</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">还没有完成的项目</h3>
-              <p className="text-gray-600">开始您的第一个 Micro-Internship 项目来建立作品集</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No completed projects yet</h3>
+              <p className="text-gray-600">Start your first Micro-Internship to build your portfolio</p>
             </div>
           )}
         </div>
@@ -270,7 +270,7 @@ export default function StudentPortfolio() {
                   <h4 className="font-bold text-lg mb-2">{badge.name}</h4>
                   <p className="text-gray-600 text-sm mb-4">{badge.description}</p>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${badge.color}`}>
-                    已获得
+                    Earned
                   </span>
                 </div>
               ))}
@@ -278,8 +278,8 @@ export default function StudentPortfolio() {
           ) : (
             <div className="text-center py-10 bg-gray-50 rounded-lg">
               <div className="text-4xl mb-4">🏆</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">还没有获得徽章</h3>
-              <p className="text-gray-600">完成项目来解锁成就徽章</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No badges yet</h3>
+              <p className="text-gray-600">Complete projects to unlock achievement badges</p>
             </div>
           )}
         </div>
@@ -297,12 +297,12 @@ export default function StudentPortfolio() {
                       <h4 className="font-bold text-lg">{cert.projectTitle}</h4>
                       <p className="text-gray-600">{cert.companyName}</p>
                       <p className="text-sm text-gray-500">
-                        完成于 {new Date(cert.completionDate).toLocaleDateString()}
+                        Completed on {new Date(cert.completionDate).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
                   <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                    下载证书
+                    Download Certificate
                   </button>
                 </div>
               </div>
@@ -310,8 +310,8 @@ export default function StudentPortfolio() {
           ) : (
             <div className="text-center py-10 bg-gray-50 rounded-lg">
               <div className="text-4xl mb-4">📜</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">还没有数字证书</h3>
-              <p className="text-gray-600">完成项目后自动生成数字证书</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No certificates yet</h3>
+              <p className="text-gray-600">Certificates will be automatically generated after project completion</p>
             </div>
           )}
         </div>
@@ -319,4 +319,3 @@ export default function StudentPortfolio() {
     </div>
   );
 }
-

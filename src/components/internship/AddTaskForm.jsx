@@ -15,7 +15,7 @@ export default function AddTaskForm({ internshipId, onClose }) {
     setLoading(true);
 
     if (!title || !description) {
-      setError('请填写任务标题和描述');
+      setError('Please enter a task title and description.');
       setLoading(false);
       return;
     }
@@ -35,7 +35,7 @@ export default function AddTaskForm({ internshipId, onClose }) {
       });
       onClose();
     } catch (err) {
-      setError('添加任务失败，请重试');
+      setError('Failed to add task. Please try again.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -46,7 +46,7 @@ export default function AddTaskForm({ internshipId, onClose }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg m-4">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">添加新任务</h2>
+          <h2 className="text-2xl font-bold">Add New Task</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -57,25 +57,25 @@ export default function AddTaskForm({ internshipId, onClose }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              任务标题 *
+              Task Title *
             </label>
             <input 
               type="text" 
               value={title} 
               onChange={e => setTitle(e.target.value)} 
-              placeholder="例如：设计社交媒体海报" 
+              placeholder="e.g., Design social media poster" 
               className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              任务描述 *
+              Task Description *
             </label>
             <textarea 
               value={description} 
               onChange={e => setDescription(e.target.value)} 
-              placeholder="详细描述任务要求、目标和交付物..." 
+              placeholder="Provide detailed requirements, goals, and deliverables..." 
               className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
               rows="4"
             />
@@ -84,7 +84,7 @@ export default function AddTaskForm({ internshipId, onClose }) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                截止日期
+                Due Date
               </label>
               <input 
                 type="date" 
@@ -95,17 +95,17 @@ export default function AddTaskForm({ internshipId, onClose }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                优先级
+                Priority
               </label>
               <select 
                 value={priority} 
                 onChange={e => setPriority(e.target.value)} 
                 className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="low">低</option>
-                <option value="medium">中</option>
-                <option value="high">高</option>
-                <option value="urgent">紧急</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
               </select>
             </div>
           </div>
@@ -118,14 +118,14 @@ export default function AddTaskForm({ internshipId, onClose }) {
               onClick={onClose} 
               className="px-6 py-3 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
             >
-              取消
+              Cancel
             </button>
             <button 
               type="submit" 
               disabled={loading} 
               className="px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
             >
-              {loading ? '添加中...' : '添加任务'}
+              {loading ? 'Adding...' : 'Add Task'}
             </button>
           </div>
         </form>

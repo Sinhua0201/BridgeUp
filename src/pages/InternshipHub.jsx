@@ -52,19 +52,21 @@ export default function InternshipHub() {
       {/* Header Section */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4 text-blue-600">🎯 Micro-Internship Hub</h1>
-        <p className="text-lg text-gray-600 mb-4">虚拟实习平台 - 在家也能拿到真实行业经验</p>
+        <p className="text-lg text-gray-600 mb-4">
+          Virtual Internship Platform – Gain real industry experience from home
+        </p>
         <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
           <span className="flex items-center">
             <span className="mr-2">🇲🇾</span>
-            支持沙巴、砂拉越学生远程参加
+            Supports students from Sabah & Sarawak to participate remotely
           </span>
           <span className="flex items-center">
             <span className="mr-2">🌐</span>
-            中英双语任务描述
+            Task descriptions available in English & Chinese
           </span>
           <span className="flex items-center">
             <span className="mr-2">🏆</span>
-            完成获得数字证书 & 推荐信
+            Receive digital certificates & recommendation letters upon completion
           </span>
         </div>
       </div>
@@ -72,16 +74,16 @@ export default function InternshipHub() {
       {/* Features Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg">
-          <h3 className="text-xl font-bold mb-3 text-blue-700">⏳ 短期项目</h3>
-          <p className="text-gray-600">2-4周线上完成，灵活安排时间</p>
+          <h3 className="text-xl font-bold mb-3 text-blue-700">⏳ Short-term Projects</h3>
+          <p className="text-gray-600">2–4 weeks online, flexible scheduling</p>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg">
-          <h3 className="text-xl font-bold mb-3 text-green-700">📋 多样化任务</h3>
-          <p className="text-gray-600">市场企划、数据整理、内容设计、应用测试</p>
+          <h3 className="text-xl font-bold mb-3 text-green-700">📋 Diverse Tasks</h3>
+          <p className="text-gray-600">Marketing, data management, content design, app testing</p>
         </div>
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg">
-          <h3 className="text-xl font-bold mb-3 text-purple-700">🏅 成就系统</h3>
-          <p className="text-gray-600">Badge、等级、Portfolio展示</p>
+          <h3 className="text-xl font-bold mb-3 text-purple-700">🏅 Achievement System</h3>
+          <p className="text-gray-600">Badges, levels, and portfolio showcase</p>
         </div>
       </div>
 
